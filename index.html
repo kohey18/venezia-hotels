@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Venezia Honeymoon Hotels | 2026.05.09 - 05.11</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+  :root {
+    --bg: #faf7f2;
+    --bg-soft: #f3eee3;
+    --card: #ffffff;
+    --text: #2a2a2a;
+    --text-secondary: #7a7166;
+    --text-muted: #a89e91;
+    --accent: #8b1f2c;
+    --accent-light: #a04050;
+    --gold: #a08540;
+    --gold-light: #c9b074;
+    --border: #e6dcca;
+    --hover: #f7f1e2;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); }
+  body {
+    font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text);
+    line-height: 1.75;
+    letter-spacing: 0.04em;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* Header */
+  .site-header {
+    background: linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 64px 24px 48px;
+    text-align: center;
+  }
+  .site-header .eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+  .site-header h1 {
+    font-size: 28px;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .site-header .deco {
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+    margin: 20px auto;
+  }
+  .site-header .meta {
+    color: var(--text-secondary);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+  }
+  .site-header .meta .sep { color: var(--gold-light); margin: 0 12px; }
+
+  /* Container */
+  .container {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Notice */
+  .notice {
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 14px 20px;
+    background: var(--bg-soft);
+    border-left: 2px solid var(--gold);
+    margin-bottom: 28px;
+    letter-spacing: 0.06em;
+    line-height: 1.8;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    padding: 18px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .controls .label {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .controls select {
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    cursor: pointer;
+    min-width: 220px;
+  }
+  .controls select:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  .controls .count {
+    margin-left: auto;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-size: 14px;
+    letter-spacing: 0.15em;
+  }
+
+  /* Table */
+  .table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    box-shadow: var(--shadow);
+  }
+  table {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead { background: var(--bg-soft); }
+  th, td {
+    padding: 18px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    user-select: none;
+    border-bottom: 1px solid var(--gold-light);
+  }
+  th.sortable { cursor: pointer; transition: color 0.2s; }
+  th.sortable:hover { color: var(--accent); }
+  th.sortable .ind {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 9px;
+    opacity: 0.4;
+    transition: all 0.2s;
+  }
+  th.sort-asc .ind, th.sort-desc .ind { opacity: 1; color: var(--accent); }
+  tbody tr { transition: background 0.15s; }
+  tbody tr:hover { background: var(--hover); }
+  tbody tr:last-child td { border-bottom: none; }
+
+  td.col-rank {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 26px;
+    color: var(--gold);
+    line-height: 1;
+    width: 48px;
+    padding-top: 22px;
+  }
+
+  .hotel-cell { min-width: 240px; }
+  .hotel-name {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .hotel-name-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    line-height: 1.6;
+    white-space: nowrap;
+    background: var(--card);
+  }
+  .badge-luxury { border-color: var(--accent); color: var(--accent); }
+  .badge-adults { border-color: #6b3c5a; color: #6b3c5a; }
+  .badge-soft { border-color: var(--border); color: var(--text-muted); }
+  .hotel-desc {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+  }
+
+  .price {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .price-currency { font-size: 12px; color: var(--text-secondary); margin-right: 2px; }
+  .price-note {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .time {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .time-unit {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-left: 3px;
+    letter-spacing: 0.1em;
+  }
+  .time-note {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .canal {
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: 0.05em;
+  }
+
+  .rating { display: flex; align-items: baseline; gap: 4px; }
+  .rating-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--accent);
+  }
+  .rating-of {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .ota {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 130px;
+  }
+
+  /* Availability column */
+  .avail-cell {
+    min-width: 150px;
+  }
+  .avail-status {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    background: var(--card);
+    margin-bottom: 6px;
+    font-family: 'Noto Serif JP', serif;
+  }
+  .avail-status.unknown { border-color: var(--border); color: var(--text-muted); }
+  .avail-status.available { border-color: #2d6b3c; color: #2d6b3c; background: #f0f6f1; font-weight: 500; }
+  .avail-status.soldout { border-color: #8b1f2c; color: #8b1f2c; background: #fbf0f1; }
+  .avail-status.check { border-color: var(--gold); color: var(--gold); background: #fbf6e8; }
+  .avail-check-btn {
+    display: block;
+    padding: 7px 10px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    background: var(--card);
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 6px;
+    font-family: 'Noto Sans JP', sans-serif;
+    transition: all 0.2s;
+  }
+  .avail-check-btn:hover {
+    background: var(--gold);
+    color: var(--card);
+  }
+  .avail-mark-row {
+    display: flex;
+    gap: 4px;
+  }
+  .avail-mark {
+    flex: 1;
+    padding: 5px 0;
+    font-size: 14px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+  }
+  .avail-mark:hover { background: var(--hover); }
+  .avail-mark.active-ok { background: #2d6b3c; color: var(--card); border-color: #2d6b3c; }
+  .avail-mark.active-ng { background: #8b1f2c; color: var(--card); border-color: #8b1f2c; }
+  .avail-mark.active-mb { background: var(--gold); color: var(--card); border-color: var(--gold); }
+  .avail-time {
+    display: block;
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .ota-btn {
+    display: block;
+    padding: 7px 10px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    border: 1px solid var(--border);
+    color: var(--text);
+    background: var(--card);
+    transition: all 0.2s;
+    text-align: center;
+    white-space: nowrap;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .ota-btn:hover {
+    background: var(--accent);
+    color: var(--card);
+    border-color: var(--accent);
+  }
+  .ota-btn.primary {
+    background: var(--accent);
+    color: var(--card);
+    border-color: var(--accent);
+  }
+  .ota-btn.primary:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-light);
+  }
+  .ota-btn.gold {
+    background: transparent;
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .ota-btn.gold:hover {
+    background: var(--gold);
+    color: var(--card);
+  }
+
+  /* Map section */
+  .map-section { margin-top: 64px; }
+  .section-head { text-align: center; margin-bottom: 32px; }
+  .section-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: 22px;
+    color: var(--text);
+    letter-spacing: 0.15em;
+  }
+  .section-deco {
+    width: 24px; height: 1px; background: var(--gold);
+    margin: 14px auto 0;
+  }
+  #map {
+    width: 100%;
+    height: 520px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .map-note {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* Pin grid */
+  .pin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .pin-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: all 0.2s;
+    font-size: 13px;
+  }
+  .pin-btn:hover {
+    border-color: var(--accent);
+    background: var(--hover);
+    transform: translateY(-1px);
+  }
+  .pin-btn .pin-icon {
+    color: var(--accent);
+    font-size: 18px;
+    line-height: 1;
+  }
+  .pin-btn .pin-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--gold);
+    font-size: 16px;
+    min-width: 18px;
+  }
+  .pin-btn .pin-name {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 500;
+    flex: 1;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    font-size: 13px;
+  }
+
+  /* Footer */
+  .site-footer {
+    margin-top: 80px;
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    border-top: 1px solid var(--border);
+    background: var(--card);
+  }
+  .site-footer .footer-deco {
+    width: 24px; height: 1px; background: var(--gold-light);
+    margin: 0 auto 16px;
+  }
+
+  /* Leaflet popup overrides */
+  .leaflet-popup-content-wrapper {
+    border-radius: 0;
+    background: var(--card);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    border: 1px solid var(--border);
+  }
+  .leaflet-popup-tip { background: var(--card); }
+  .popup-title {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: 0.04em;
+  }
+  .popup-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .popup-link {
+    display: inline-block;
+    padding: 5px 10px;
+    background: var(--accent);
+    color: var(--card) !important;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+  }
+  .popup-link:hover { background: var(--accent-light); }
+
+  /* Custom marker icon */
+  .pin-marker {
+    background: var(--accent);
+    width: 28px;
+    height: 28px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    border: 2px solid var(--card);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pin-marker span {
+    transform: rotate(45deg);
+    color: var(--card);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .pin-marker.station { background: var(--gold); }
+  .pin-marker.bus { background: #5a6b3c; }
+
+  @media (max-width: 768px) {
+    .site-header { padding: 40px 20px 32px; }
+    .site-header h1 { font-size: 22px; }
+    .container { padding: 24px 16px 60px; }
+    .controls select { min-width: 0; flex: 1; }
+    th, td { padding: 14px 10px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="eyebrow">Venezia Honeymoon</div>
+  <h1>ヴェネツィア ハネムーン<br />ホテル候補一覧</h1>
+  <div class="deco"></div>
+  <div class="meta">2026.05.09 — 05.11<span class="sep">|</span>2泊<span class="sep">|</span>大運河ビュー × Cannaregio</div>
+</header>
+
+<div class="container">
+
+  <div class="notice">
+    ※ 参考料金は2026年5月時点の調査ベース概算（2名・税サ込）です。実際の料金は各OTAリンクから日付指定で必ず再確認してください。記載の所要時間は徒歩・水上タクシー・バス乗り継ぎの目安。<br />
+    ※ 選定基準: サンタルチア駅徒歩 ≤20分 OR Piazzale Roma 徒歩 ≤10分／4★以上／運河ビュー対応客室あり／歴史パラッツォ・モダンデザイン両方対象／ブランド不問（チェーン含む）。<br />
+    ※ <strong>空室状況の使い方</strong>: ▶ 一括チェックでBooking／Expedia／公式の3タブを同時オープン → 確認後 ○／△／✕ のいずれかをクリックで記録。状態はブラウザに保存され次回も保持されます。
+  </div>
+
+  <div class="controls">
+    <span class="label">SORT BY</span>
+    <select id="sort-select">
+      <option value="stationWalk-asc" selected>駅までの徒歩 短い順</option>
+      <option value="busWalk-asc">バス降車後の徒歩 短い順</option>
+      <option value="waterTaxi-asc">水上タクシー 短い順</option>
+      <option value="priceMin-asc">参考料金 安い順</option>
+      <option value="priceMin-desc">参考料金 高い順</option>
+      <option value="rating-desc">評価 高い順</option>
+      <option value="availStatus-asc">空室状況（あり優先）</option>
+    </select>
+    <span class="count" id="count-display">11 hotels</span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="hotel-table">
+      <thead>
+        <tr>
+          <th>—</th>
+          <th>ホテル<span class="ind"></span></th>
+          <th class="sortable" data-key="priceMin">参考料金/泊<span class="ind">⇅</span></th>
+          <th class="sortable" data-key="stationWalk">駅徒歩<span class="ind">⇅</span></th>
+          <th class="sortable" data-key="busWalk">バス降車後<span class="ind">⇅</span></th>
+          <th class="sortable" data-key="waterTaxi">水上タクシー<span class="ind">⇅</span></th>
+          <th>運河ビュー</th>
+          <th class="sortable" data-key="rating">評価<span class="ind">⇅</span></th>
+          <th class="sortable" data-key="availStatus">空室状況<span class="ind">⇅</span></th>
+          <th>予約</th>
+        </tr>
+      </thead>
+      <tbody id="hotel-tbody"></tbody>
+    </table>
+  </div>
+
+  <section class="map-section">
+    <div class="section-head">
+      <div class="section-eyebrow">Location Map</div>
+      <h2 class="section-title">ホテル位置</h2>
+      <div class="section-deco"></div>
+    </div>
+    <div id="map"></div>
+    <div class="map-note">マーカー番号（Ⅰ〜Ⅺ）はテーブル・ピンリストと完全連動 ／ クリック → ポップアップから Google Maps へ遷移</div>
+
+    <div class="pin-grid" id="pin-grid"></div>
+  </section>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-deco"></div>
+  Compiled for honeymoon planning<span style="margin: 0 12px; color: var(--gold-light);">·</span>2026.04.29
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+const DATES = { in: "2026-05-09", out: "2026-05-11" };
+
+function bookingSearch(name) {
+  return `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(name + ' Venice')}&checkin=${DATES.in}&checkout=${DATES.out}&group_adults=2&group_children=0&no_rooms=1`;
+}
+function expediaSearch(name) {
+  return `https://www.expedia.com/Hotel-Search?destination=${encodeURIComponent(name + ' Venice')}&startDate=${DATES.in}&endDate=${DATES.out}&adults=2`;
+}
+function gmapsLink(name) {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' Venice')}`;
+}
+function withDates(url) {
+  const sep = url.includes('?') ? '&' : '?';
+  return `${url}${sep}checkin=${DATES.in}&checkout=${DATES.out}&group_adults=2&group_children=0&no_rooms=1`;
+}
+
+const hotels = [
+  {
+    id: 1,
+    nameJa: "パラッツォ・ヴェナルト",
+    nameEn: "Palazzo Venart Luxury Hotel",
+    badges: [{ label: "5★ LHW", cls: "badge-luxury" }, { label: "MICHELIN ★★", cls: "" }],
+    sestiere: "Santa Croce",
+    desc: "16世紀パラッツォ。Leading Hotels of the World加盟、館内に2★ミシュラン「GLAM」",
+    priceMin: 700, priceMax: 1200,
+    stationWalk: 10, busWalk: 11, waterTaxi: 32,
+    canalView: "大運河 + 庭園",
+    rating: 4.7,
+    lat: 45.4408, lng: 12.3258,
+    official: "https://www.palazzovenart.com/",
+    booking: withDates("https://www.booking.com/hotel/it/palazzo-venart-luxury.html"),
+    expedia: "https://www.expedia.com/Venice-Hotels-Palazzo-Venart-Luxury-Hotel.h15124381.Hotel-Information?chkin=2026-05-09&chkout=2026-05-11&adults=2",
+    extra: { label: "LHW", url: "https://www.lhw.com/hotel/Palazzo-Venart-Venice-Italy" }
+  },
+  {
+    id: 2,
+    nameJa: "カ・ニグラ ラグーンリゾート",
+    nameEn: "Ca' Nigra Lagoon Resort",
+    badges: [{ label: "4★ Superior", cls: "" }, { label: "Adults Only", cls: "badge-adults" }],
+    sestiere: "Cannaregio",
+    desc: "18世紀貴族邸宅。22スイート、大運河に面した庭園2つ、自前cavana（水門）",
+    priceMin: 350, priceMax: 600,
+    stationWalk: 4, busWalk: 5, waterTaxi: 30,
+    canalView: "大運河 + 庭園",
+    rating: 4.5,
+    lat: 45.4438, lng: 12.3215,
+    official: "https://www.hotelcanigra.com/",
+    booking: bookingSearch("Ca Nigra Lagoon Resort"),
+    expedia: expediaSearch("Ca Nigra Lagoon Resort")
+  },
+  {
+    id: 3,
+    nameJa: "ホテル・アンティケ・フィグーレ",
+    nameEn: "Hotel Antiche Figure",
+    badges: [{ label: "4★ ブティック", cls: "" }, { label: "駅対岸", cls: "badge-soft" }],
+    sestiere: "Santa Croce",
+    desc: "サンタルチア駅の対岸（橋一本）。15世紀パラッツォ改装の22室、TripAdvisor上位10%",
+    priceMin: 250, priceMax: 450,
+    stationWalk: 3, busWalk: 6, waterTaxi: 30,
+    canalView: "大運河（駅対岸）",
+    rating: 4.6,
+    lat: 45.4404, lng: 12.3203,
+    official: "https://www.hotelantichefigure.it/",
+    booking: withDates("https://www.booking.com/hotel/it/hotelantichefigure.html"),
+    expedia: "https://www.expedia.com/Venice-Hotels-Hotel-Antiche-Figure.h976826.Hotel-Information?chkin=2026-05-09&chkout=2026-05-11&adults=2"
+  },
+  {
+    id: 4,
+    nameJa: "ホテル・パラッツォ・ジョヴァネッリ",
+    nameEn: "Hotel Palazzo Giovanelli e Gran Canal",
+    badges: [{ label: "4★ パラッツォ", cls: "" }],
+    sestiere: "Santa Croce",
+    desc: "16世紀ドージェ／モーツァルト家ゆかりのパラッツォ。Mozart Suite（120㎡）あり",
+    priceMin: 350, priceMax: 600,
+    stationWalk: 10, busWalk: 11, waterTaxi: 30,
+    canalView: "大運河",
+    rating: 4.4,
+    lat: 45.4419, lng: 12.3290,
+    official: "https://www.hotelpalazzogiovanelli.com/",
+    booking: bookingSearch("Hotel Palazzo Giovanelli e Gran Canal"),
+    expedia: "https://www.expedia.com/Venice-Hotels-Hotel-Palazzo-Giovanelli-E-Gran-Canal.h2976632.Hotel-Information?chkin=2026-05-09&chkout=2026-05-11&adults=2"
+  },
+  {
+    id: 5,
+    nameJa: "カ・サグレド ホテル",
+    nameEn: "Ca' Sagredo Hotel",
+    badges: [{ label: "5★ SLH", cls: "badge-luxury" }, { label: "歴史的宮殿", cls: "" }],
+    sestiere: "Cannaregio",
+    desc: "Small Luxury Hotels of the World。15世紀宮殿でTiepolo・Ricci等のフレスコ画。\"半分美術館\"",
+    priceMin: 450, priceMax: 800,
+    stationWalk: 18, busWalk: 20, waterTaxi: 30,
+    canalView: "大運河（パノラマ）",
+    rating: 4.5,
+    lat: 45.4418, lng: 12.3346,
+    official: "https://www.casagredohotel.com/",
+    booking: bookingSearch("Ca Sagredo Hotel"),
+    expedia: expediaSearch("Ca Sagredo Hotel"),
+    extra: { label: "SLH", url: "https://slh.com/hotels/ca-sagredo-hotel" }
+  },
+  {
+    id: 6,
+    nameJa: "ホテル・カナル・グランデ",
+    nameEn: "Hotel Canal Grande",
+    badges: [{ label: "4★ ブティック", cls: "" }],
+    sestiere: "Santa Croce",
+    desc: "Ca' Polacco（小宮殿）改装、ロココ調内装。駅近で静謐、新婚夫婦に人気",
+    priceMin: 250, priceMax: 450,
+    stationWalk: 9, busWalk: 8, waterTaxi: 30,
+    canalView: "大運河",
+    rating: 4.5,
+    lat: 45.4378, lng: 12.3257,
+    official: "https://www.hotelcanalgrande.it/",
+    booking: withDates("https://www.booking.com/hotel/it/canal-grande.html"),
+    expedia: expediaSearch("Hotel Canal Grande")
+  },
+  {
+    id: 7,
+    nameJa: "ホテル・パラッツォ・アバデッサ",
+    nameEn: "Hotel Palazzo Abadessa",
+    badges: [{ label: "4★ 歴史邸宅", cls: "" }, { label: "庭園付", cls: "badge-soft" }],
+    sestiere: "Cannaregio",
+    desc: "1540年ドージェ邸宅。私有庭園、フレスコ天井、自前ドック。プロセッコのウェルカム",
+    priceMin: 300, priceMax: 500,
+    stationWalk: 15, busWalk: 15, waterTaxi: 30,
+    canalView: "Santa Sofia運河 + 庭園",
+    rating: 4.6,
+    lat: 45.4427, lng: 12.3361,
+    official: "https://www.mobile.abadessa.com/",
+    booking: withDates("https://www.booking.com/hotel/it/palazzo-abadessa.html"),
+    expedia: expediaSearch("Hotel Palazzo Abadessa")
+  },
+  {
+    id: 8,
+    nameJa: "NH ヴェネツィア・サンタルチア",
+    nameEn: "NH Venezia Santa Lucia",
+    badges: [{ label: "4★ チェーン", cls: "" }, { label: "駅徒歩1分", cls: "badge-soft" }],
+    sestiere: "Cannaregio",
+    desc: "駅出口左すぐ。100室全室バルコニーで運河ビュー、屋上テラスから大運河の夕景",
+    priceMin: 200, priceMax: 400,
+    stationWalk: 1, busWalk: 5, waterTaxi: 30,
+    canalView: "大運河（バルコニー付）",
+    rating: 4.2,
+    lat: 45.4416, lng: 12.3198,
+    official: "https://www.nh-hotels.com/en/hotel/nh-venezia-santa-lucia",
+    booking: bookingSearch("NH Venezia Santa Lucia"),
+    expedia: expediaSearch("NH Venezia Santa Lucia")
+  },
+  {
+    id: 9,
+    nameJa: "ホテル・プリンチペ",
+    nameEn: "Hotel Principe",
+    badges: [{ label: "4★ クラシック", cls: "" }, { label: "運河面テラス", cls: "badge-soft" }],
+    sestiere: "Cannaregio",
+    desc: "駅から200m、大運河と同じ高さの運河面テラスで朝食可。139室、伝統的Venetianスタイル",
+    priceMin: 200, priceMax: 400,
+    stationWalk: 3, busWalk: 7, waterTaxi: 30,
+    canalView: "大運河（テラス）",
+    rating: 4.0,
+    lat: 45.4413, lng: 12.3211,
+    official: "https://www.hotelprincipevenice.it/",
+    booking: withDates("https://www.booking.com/hotel/it/principe.html"),
+    expedia: expediaSearch("Hotel Principe Venice")
+  },
+  {
+    id: 10,
+    nameJa: "カーニバル・パレス",
+    nameEn: "Carnival Palace Hotel",
+    badges: [{ label: "4★ ブティック", cls: "" }, { label: "庭付", cls: "badge-soft" }],
+    sestiere: "Cannaregio",
+    desc: "Cannaregio運河沿い67室。Murano製シャンデリア、Carrara大理石浴室、内側に大庭園",
+    priceMin: 200, priceMax: 400,
+    stationWalk: 8, busWalk: 8, waterTaxi: 30,
+    canalView: "Cannaregio運河 + 庭園",
+    rating: 4.3,
+    lat: 45.4441, lng: 12.3198,
+    official: "https://www.carnivalpalace.com/",
+    booking: bookingSearch("Carnival Palace Hotel"),
+    expedia: expediaSearch("Carnival Palace Hotel Venice")
+  },
+  {
+    id: 11,
+    nameJa: "AC ホテル ヴェネツィア",
+    nameEn: "AC Hotel Venezia by Marriott",
+    badges: [{ label: "4★ Design", cls: "" }, { label: "P.le Roma 徒歩3分", cls: "badge-soft" }, { label: "Marriott Bonvoy", cls: "badge-soft" }],
+    sestiere: "Santa Croce",
+    desc: "Marriott系デザインブティック79室。Superior Canal View 14室、サンテラス＆庭園、ハッピーアワーAC Lounge。バス・電車・水上タクシー全方位アクセス最強",
+    priceMin: 200, priceMax: 380,
+    stationWalk: 8, busWalk: 3, waterTaxi: 30,
+    canalView: "運河ビュー（Superior 14室）",
+    rating: 4.3,
+    lat: 45.4385, lng: 12.3175,
+    official: "https://www.marriott.com/en-us/hotels/vceac-ac-hotel-venezia/overview/",
+    booking: withDates("https://www.booking.com/hotel/it/ac-venezia-by-marriott.html"),
+    expedia: "https://www.expedia.com/Venice-Hotels-Ac-Hotel-Venezia-By-Marriott.h22489246.Hotel-Information?chkin=2026-05-09&chkout=2026-05-11&adults=2"
+  }
+];
+
+const tbody = document.getElementById('hotel-tbody');
+const sortSelect = document.getElementById('sort-select');
+const ths = document.querySelectorAll('th.sortable');
+
+let currentSort = { key: 'stationWalk', dir: 'asc' };
+
+function getRomanNumeral(n) {
+  const map = ["", "Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ", "Ⅶ", "Ⅷ", "Ⅸ", "Ⅹ", "Ⅺ", "Ⅻ"];
+  return map[n] || n;
+}
+
+// --- Availability state (localStorage) ---
+const AVAIL_KEY = 'venezia-honeymoon-availability';
+function loadAvail() {
+  try { return JSON.parse(localStorage.getItem(AVAIL_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function saveAvail(state) {
+  localStorage.setItem(AVAIL_KEY, JSON.stringify(state));
+}
+let availState = loadAvail(); // { [hotelId]: { status: 'ok'|'ng'|'mb'|'unknown', checkedAt: timestamp } }
+
+const STATUS_LABEL = {
+  unknown: '未確認',
+  ok: '○ 空室あり',
+  ng: '✕ 満室',
+  mb: '△ 要確認'
+};
+const STATUS_CLASS = {
+  unknown: 'unknown',
+  ok: 'available',
+  ng: 'soldout',
+  mb: 'check'
+};
+const STATUS_ORDER = { ok: 0, mb: 1, unknown: 2, ng: 3 };
+
+function setStatus(id, status) {
+  if (!availState[id]) availState[id] = {};
+  availState[id].status = status;
+  availState[id].checkedAt = Date.now();
+  saveAvail(availState);
+  applySort();
+}
+window.markAvail = setStatus;
+window.openAllOTA = function(id) {
+  const h = hotels.find(x => x.id === id);
+  if (!h) return;
+  window.open(h.booking, '_blank', 'noopener');
+  window.open(h.expedia, '_blank', 'noopener');
+  window.open(h.official, '_blank', 'noopener');
+  // Auto-mark as 要確認 (user has clicked through)
+  if (!availState[id] || availState[id].status === 'unknown') {
+    setStatus(id, 'mb');
+  }
+};
+
+function fmtTime(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${m}/${day} ${hh}:${mm}`;
+}
+
+function renderTable(data) {
+  tbody.innerHTML = data.map((h, idx) => {
+    const badges = h.badges.map(b => `<span class="badge ${b.cls}">${b.label}</span>`).join('');
+    const extraBtn = h.extra ? `<a class="ota-btn gold" href="${h.extra.url}" target="_blank" rel="noopener">${h.extra.label}</a>` : '';
+    const av = availState[h.id] || {};
+    const status = av.status || 'unknown';
+    const statusLabel = STATUS_LABEL[status];
+    const statusCls = STATUS_CLASS[status];
+    const checkedAt = av.checkedAt ? `<span class="avail-time">checked: ${fmtTime(av.checkedAt)}</span>` : '';
+    return `
+      <tr>
+        <td class="col-rank">${getRomanNumeral(h.id)}</td>
+        <td class="hotel-cell">
+          <div class="badges">${badges}</div>
+          <div class="hotel-name">${h.nameJa}</div>
+          <div class="hotel-name-en">${h.nameEn}</div>
+          <div class="hotel-desc">${h.desc}</div>
+        </td>
+        <td>
+          <div class="price"><span class="price-currency">€</span>${h.priceMin}〜${h.priceMax}</div>
+          <span class="price-note">2名・税サ込・概算</span>
+        </td>
+        <td>
+          <div><span class="time">${h.stationWalk}</span><span class="time-unit">min</span></div>
+          <span class="time-note">サンタルチア駅</span>
+        </td>
+        <td>
+          <div><span class="time">${h.busWalk}</span><span class="time-unit">min</span></div>
+          <span class="time-note">P.le Roma → 徒歩</span>
+        </td>
+        <td>
+          <div><span class="time">${h.waterTaxi}</span><span class="time-unit">min</span></div>
+          <span class="time-note">空港 → 直行</span>
+        </td>
+        <td>
+          <div class="canal">${h.canalView}</div>
+          <div class="hotel-desc" style="margin-top:4px">${h.sestiere}</div>
+        </td>
+        <td>
+          <div class="rating">
+            <span class="rating-num">${h.rating.toFixed(1)}</span>
+            <span class="rating-of">/5.0</span>
+          </div>
+        </td>
+        <td class="avail-cell">
+          <span class="avail-status ${statusCls}">${statusLabel}</span>
+          <button class="avail-check-btn" onclick="openAllOTA(${h.id})" title="Booking / Expedia / 公式サイトを新規タブで一括オープン">▶ 一括チェック</button>
+          <div class="avail-mark-row">
+            <button class="avail-mark ${status === 'ok' ? 'active-ok' : ''}" onclick="markAvail(${h.id}, 'ok')" title="空室あり">○</button>
+            <button class="avail-mark ${status === 'mb' ? 'active-mb' : ''}" onclick="markAvail(${h.id}, 'mb')" title="要再確認">△</button>
+            <button class="avail-mark ${status === 'ng' ? 'active-ng' : ''}" onclick="markAvail(${h.id}, 'ng')" title="満室">✕</button>
+          </div>
+          ${checkedAt}
+        </td>
+        <td>
+          <div class="ota">
+            <a class="ota-btn primary" href="${h.booking}" target="_blank" rel="noopener">Booking.com</a>
+            <a class="ota-btn" href="${h.expedia}" target="_blank" rel="noopener">Expedia</a>
+            <a class="ota-btn" href="${h.official}" target="_blank" rel="noopener">公式サイト</a>
+            ${extraBtn}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function sortData(key, dir) {
+  const sorted = [...hotels].sort((a, b) => {
+    let va, vb;
+    if (key === 'availStatus') {
+      const sa = (availState[a.id] && availState[a.id].status) || 'unknown';
+      const sb = (availState[b.id] && availState[b.id].status) || 'unknown';
+      va = STATUS_ORDER[sa];
+      vb = STATUS_ORDER[sb];
+    } else {
+      va = a[key]; vb = b[key];
+    }
+    if (va < vb) return dir === 'asc' ? -1 : 1;
+    if (va > vb) return dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return sorted;
+}
+
+function applySort() {
+  const data = sortData(currentSort.key, currentSort.dir);
+  renderTable(data);
+  ths.forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+    if (th.dataset.key === currentSort.key) {
+      th.classList.add(currentSort.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+    }
+  });
+}
+
+ths.forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if (currentSort.key === key) {
+      currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      currentSort.key = key;
+      currentSort.dir = (key === 'rating') ? 'desc' : 'asc';
+    }
+    sortSelect.value = `${currentSort.key}-${currentSort.dir}`;
+    applySort();
+  });
+});
+
+sortSelect.addEventListener('change', () => {
+  const [key, dir] = sortSelect.value.split('-');
+  currentSort = { key, dir };
+  applySort();
+});
+
+applySort();
+
+// --- Pin grid ---
+const pinGrid = document.getElementById('pin-grid');
+pinGrid.innerHTML = hotels.map((h) => `
+  <a class="pin-btn" href="${gmapsLink(h.nameEn)}" target="_blank" rel="noopener">
+    <span class="pin-num">${getRomanNumeral(h.id)}</span>
+    <span class="pin-icon">📍</span>
+    <span class="pin-name">${h.nameJa}</span>
+  </a>
+`).join('');
+
+// --- Map ---
+const map = L.map('map', {
+  center: [45.4416, 12.3265],
+  zoom: 15,
+  scrollWheelZoom: false
+});
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+function makeIcon(content, cls) {
+  return L.divIcon({
+    className: '',
+    html: `<div class="pin-marker ${cls || ''}"><span>${content}</span></div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -28]
+  });
+}
+
+hotels.forEach((h) => {
+  const marker = L.marker([h.lat, h.lng], {
+    icon: makeIcon(getRomanNumeral(h.id))
+  }).addTo(map);
+  marker.bindPopup(`
+    <div class="popup-title">${h.nameJa}</div>
+    <div class="popup-en">${h.nameEn}</div>
+    <a class="popup-link" href="${gmapsLink(h.nameEn)}" target="_blank" rel="noopener">Google Maps で開く</a>
+  `);
+});
+
+L.marker([45.4413, 12.3214], { icon: makeIcon('S', 'station') })
+  .addTo(map)
+  .bindPopup('<div class="popup-title">Venezia Santa Lucia 駅</div><div class="popup-en">5/11 ミラノ方面 出発駅</div>');
+
+L.marker([45.4380, 12.3186], { icon: makeIcon('B', 'bus') })
+  .addTo(map)
+  .bindPopup('<div class="popup-title">Piazzale Roma</div><div class="popup-en">空港バス降車地点</div>');
+</script>
+</body>
+</html>
