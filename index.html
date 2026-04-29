@@ -378,7 +378,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    flex-wrap: wrap;
+    width: 100%;
   }
   .avail-status {
     display: inline-block;
@@ -390,6 +390,7 @@
     background: var(--card);
     font-family: 'Noto Serif JP', serif;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .avail-status.unknown { border-color: var(--border); color: var(--text-muted); }
   .avail-status.available { border-color: #2d6b3c; color: #2d6b3c; background: #f0f6f1; font-weight: 500; }
@@ -398,13 +399,14 @@
   .avail-mark-row {
     display: flex;
     gap: 3px;
+    flex: 1;
   }
   .avail-mark {
-    width: 30px;
-    height: 26px;
+    flex: 1;
+    height: 30px;
     padding: 0;
-    font-size: 13px;
-    line-height: 26px;
+    font-size: 14px;
+    line-height: 30px;
     text-align: center;
     border: 1px solid var(--border);
     background: var(--card);
@@ -1183,7 +1185,7 @@ function renderTable(data) {
           <div class="canal">${h.canalView}</div>
           <div class="hotel-desc" style="margin-top:4px">${h.sestiere}</div>
         </td>
-        <td class="avail-cell" data-label="空室状況">
+        <td class="avail-cell">
           <div class="avail-section">
             <div class="avail-compact">
               <span class="avail-status ${statusCls}">${statusLabel}</span>
