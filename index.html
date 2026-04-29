@@ -376,8 +376,7 @@
   }
   .avail-compact {
     display: flex;
-    align-items: center;
-    gap: 6px;
+    gap: 4px;
     width: 100%;
   }
   .avail-status {
@@ -390,7 +389,8 @@
     background: var(--card);
     font-family: 'Noto Serif JP', serif;
     white-space: nowrap;
-    flex-shrink: 0;
+    flex: 1;
+    text-align: center;
   }
   .avail-status.unknown { border-color: var(--border); color: var(--text-muted); }
   .avail-status.available { border-color: #2d6b3c; color: #2d6b3c; background: #f0f6f1; font-weight: 500; }
@@ -398,8 +398,8 @@
   .avail-status.check { border-color: var(--gold); color: var(--gold); background: #fbf6e8; }
   .avail-mark-row {
     display: flex;
-    gap: 3px;
-    flex: 1;
+    gap: 4px;
+    flex: 3;
   }
   .avail-mark {
     flex: 1;
