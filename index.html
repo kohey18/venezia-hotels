@@ -272,6 +272,17 @@
     letter-spacing: 0.12em;
     margin-bottom: 8px;
   }
+  .hotel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hotel-header .rating {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding-top: 2px;
+  }
   .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
   .badge {
     display: inline-block;
@@ -361,50 +372,40 @@
 
   /* Availability column */
   .avail-cell {
-    min-width: 150px;
+    min-width: 120px;
+  }
+  .avail-compact {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
   }
   .avail-status {
     display: inline-block;
-    padding: 4px 10px;
-    font-size: 11px;
-    letter-spacing: 0.15em;
+    padding: 3px 8px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
     border: 1px solid var(--border);
     color: var(--text-secondary);
     background: var(--card);
-    margin-bottom: 6px;
     font-family: 'Noto Serif JP', serif;
+    white-space: nowrap;
   }
   .avail-status.unknown { border-color: var(--border); color: var(--text-muted); }
   .avail-status.available { border-color: #2d6b3c; color: #2d6b3c; background: #f0f6f1; font-weight: 500; }
   .avail-status.soldout { border-color: #8b1f2c; color: #8b1f2c; background: #fbf0f1; }
   .avail-status.check { border-color: var(--gold); color: var(--gold); background: #fbf6e8; }
-  .avail-check-btn {
-    display: block;
-    padding: 7px 10px;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    background: var(--card);
-    cursor: pointer;
-    text-align: center;
-    width: 100%;
-    margin-bottom: 6px;
-    font-family: 'Noto Sans JP', sans-serif;
-    transition: all 0.2s;
-  }
-  .avail-check-btn:hover {
-    background: var(--gold);
-    color: var(--card);
-  }
   .avail-mark-row {
     display: flex;
-    gap: 4px;
+    gap: 3px;
   }
   .avail-mark {
-    flex: 1;
-    padding: 5px 0;
-    font-size: 14px;
+    width: 30px;
+    height: 26px;
+    padding: 0;
+    font-size: 13px;
+    line-height: 26px;
+    text-align: center;
     border: 1px solid var(--border);
     background: var(--card);
     cursor: pointer;
@@ -725,7 +726,7 @@
   <div class="notice">
     ※ 参考料金は2026年5月時点の調査ベース概算（2名・税サ込）です。実際の料金は各OTAリンクから日付指定で必ず再確認してください。記載の所要時間は徒歩・水上タクシー・バス乗り継ぎの目安。<br />
     ※ 選定基準: サンタルチア駅徒歩 ≤20分 OR Piazzale Roma 徒歩 ≤10分／4★以上／運河ビュー対応客室あり／歴史パラッツォ・モダンデザイン両方対象／ブランド不問（チェーン含む）。<br />
-    ※ <strong>空室状況の使い方</strong>: ▶ 一括チェックでBooking／Expedia／公式の3タブを同時オープン → 確認後 ○／△／✕ のいずれかをクリックで記録。状態はブラウザに保存され次回も保持されます。<br />
+    ※ <strong>空室状況の使い方</strong>: 各OTAリンクから確認後、○／△／✕ のいずれかをクリックで記録。状態はブラウザに保存され次回も保持されます。<br />
     ※ <strong>お気に入り（★）／メモ</strong>: 番号下の ☆ をクリックでお気に入り登録、ホテル説明下の Memo 欄に自由記入（自動保存）。並び替えで「★ お気に入り優先」を選択するとお気に入りが上位に表示されます。
   </div>
 
@@ -755,8 +756,7 @@
           <th class="sortable" data-key="busWalk">バス降車後<span class="ind">⇅</span></th>
           <th class="sortable" data-key="waterTaxi">水上タクシー<span class="ind">⇅</span></th>
           <th>運河ビュー</th>
-          <th class="sortable" data-key="rating">評価<span class="ind">⇅</span></th>
-          <th class="sortable" data-key="availStatus">空室状況<span class="ind">⇅</span></th>
+          <th class="sortable" data-key="availStatus">空室<span class="ind">⇅</span></th>
           <th>予約</th>
         </tr>
       </thead>
@@ -1127,8 +1127,16 @@ function renderTable(data) {
         </td>
         <td class="hotel-cell">
           <div class="badges">${badges}</div>
-          <div class="hotel-name">${h.nameJa}</div>
-          <div class="hotel-name-en">${h.nameEn}</div>
+          <div class="hotel-header">
+            <div>
+              <div class="hotel-name">${h.nameJa}</div>
+              <div class="hotel-name-en">${h.nameEn}</div>
+            </div>
+            <div class="rating">
+              <span class="rating-num">${h.rating.toFixed(1)}</span>
+              <span class="rating-of">/5.0</span>
+            </div>
+          </div>
           <div class="hotel-desc">${h.desc}</div>
           <div class="memo">
             <span class="memo-label">Memo</span>
@@ -1156,19 +1164,14 @@ function renderTable(data) {
           <div class="canal">${h.canalView}</div>
           <div class="hotel-desc" style="margin-top:4px">${h.sestiere}</div>
         </td>
-        <td data-label="評価">
-          <div class="rating">
-            <span class="rating-num">${h.rating.toFixed(1)}</span>
-            <span class="rating-of">/5.0</span>
-          </div>
-        </td>
-        <td class="avail-cell" data-label="空室状況">
-          <span class="avail-status ${statusCls}">${statusLabel}</span>
-          <button class="avail-check-btn" onclick="openAllOTA(${h.id})" title="Booking / Expedia / 公式サイトを新規タブで一括オープン">▶ 一括チェック</button>
-          <div class="avail-mark-row">
-            <button class="avail-mark ${status === 'ok' ? 'active-ok' : ''}" onclick="markAvail(${h.id}, 'ok')" title="空室あり">○</button>
-            <button class="avail-mark ${status === 'mb' ? 'active-mb' : ''}" onclick="markAvail(${h.id}, 'mb')" title="要再確認">△</button>
-            <button class="avail-mark ${status === 'ng' ? 'active-ng' : ''}" onclick="markAvail(${h.id}, 'ng')" title="満室">✕</button>
+        <td class="avail-cell expandable" data-label="空室状況">
+          <div class="avail-compact">
+            <span class="avail-status ${statusCls}">${statusLabel}</span>
+            <div class="avail-mark-row">
+              <button class="avail-mark ${status === 'ok' ? 'active-ok' : ''}" onclick="markAvail(${h.id}, 'ok')" title="空室あり">○</button>
+              <button class="avail-mark ${status === 'mb' ? 'active-mb' : ''}" onclick="markAvail(${h.id}, 'mb')" title="要再確認">△</button>
+              <button class="avail-mark ${status === 'ng' ? 'active-ng' : ''}" onclick="markAvail(${h.id}, 'ng')" title="満室">✕</button>
+            </div>
           </div>
           ${checkedAt}
         </td>
