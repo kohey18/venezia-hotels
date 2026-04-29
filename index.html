@@ -1163,7 +1163,6 @@ function renderTable(data) {
             <textarea placeholder="ここにメモを入力（自動保存）" oninput="updateMemo(${h.id}, this.value)">${memoVal}</textarea>
           </div>
           <button class="expand-toggle" onclick="toggleExpand(${h.id})">${isExpanded ? '▲ 閉じる' : '▼ 詳細を表示'}</button>
-          <button class="avail-toggle" onclick="toggleAvailSection(${h.id})">${expandedAvailIds.has(h.id) ? '▲ 閉じる' : '▼ 空き状況を入力'}</button>
         </td>
         <td class="expandable" data-label="参考料金/泊">
           <div class="price"><span class="price-currency">€</span>${h.priceMin}〜${h.priceMax}</div>
