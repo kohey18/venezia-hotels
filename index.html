@@ -1185,7 +1185,7 @@ function renderTable(data) {
           <div class="hotel-desc" style="margin-top:4px">${h.sestiere}</div>
         </td>
         <td class="avail-cell">
-          <button class="avail-toggle" onclick="toggleAvailSection(\${h.id})">\${expandedAvailIds.has(h.id) ? '▲ 閉じる' : '▼ 空き状況を入力'}</button>
+          <button class="avail-toggle" onclick="toggleAvailSection(${h.id})">${expandedAvailIds.has(h.id) ? '▲ 閉じる' : '▼ 空き状況を入力'}</button>
           <div class="avail-section">
             <div class="avail-compact">
               <span class="avail-status ${statusCls}">${statusLabel}</span>
