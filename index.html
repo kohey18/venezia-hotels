@@ -188,8 +188,68 @@
     font-size: 26px;
     color: var(--gold);
     line-height: 1;
-    width: 48px;
+    width: 56px;
     padding-top: 22px;
+    text-align: center;
+  }
+  .fav-btn {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--border);
+    padding: 0;
+    margin: 10px auto 0;
+    line-height: 1;
+    transition: all 0.15s;
+    font-family: serif;
+  }
+  .fav-btn:hover {
+    color: var(--gold-light);
+    transform: scale(1.15);
+  }
+  .fav-btn.active {
+    color: var(--gold);
+    text-shadow: 0 0 1px var(--gold);
+  }
+  .memo {
+    margin-top: 12px;
+  }
+  .memo-label {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .memo textarea {
+    width: 100%;
+    min-height: 38px;
+    padding: 7px 10px;
+    border: 1px dashed var(--border);
+    background: transparent;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 11px;
+    color: var(--text);
+    resize: vertical;
+    line-height: 1.7;
+    letter-spacing: 0.04em;
+    box-sizing: border-box;
+  }
+  .memo textarea:focus {
+    outline: none;
+    border-style: solid;
+    border-color: var(--gold);
+    background: #fbf6e8;
+  }
+  .memo textarea::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    letter-spacing: 0.1em;
   }
 
   .hotel-cell { min-width: 240px; }
@@ -576,12 +636,14 @@
   <div class="notice">
     ※ 参考料金は2026年5月時点の調査ベース概算（2名・税サ込）です。実際の料金は各OTAリンクから日付指定で必ず再確認してください。記載の所要時間は徒歩・水上タクシー・バス乗り継ぎの目安。<br />
     ※ 選定基準: サンタルチア駅徒歩 ≤20分 OR Piazzale Roma 徒歩 ≤10分／4★以上／運河ビュー対応客室あり／歴史パラッツォ・モダンデザイン両方対象／ブランド不問（チェーン含む）。<br />
-    ※ <strong>空室状況の使い方</strong>: ▶ 一括チェックでBooking／Expedia／公式の3タブを同時オープン → 確認後 ○／△／✕ のいずれかをクリックで記録。状態はブラウザに保存され次回も保持されます。
+    ※ <strong>空室状況の使い方</strong>: ▶ 一括チェックでBooking／Expedia／公式の3タブを同時オープン → 確認後 ○／△／✕ のいずれかをクリックで記録。状態はブラウザに保存され次回も保持されます。<br />
+    ※ <strong>お気に入り（★）／メモ</strong>: 番号下の ☆ をクリックでお気に入り登録、ホテル説明下の Memo 欄に自由記入（自動保存）。並び替えで「★ お気に入り優先」を選択するとお気に入りが上位に表示されます。
   </div>
 
   <div class="controls">
     <span class="label">SORT BY</span>
     <select id="sort-select">
+      <option value="favStatus-asc">★ お気に入り優先</option>
       <option value="stationWalk-asc" selected>駅までの徒歩 短い順</option>
       <option value="busWalk-asc">バス降車後の徒歩 短い順</option>
       <option value="waterTaxi-asc">水上タクシー 短い順</option>
@@ -842,16 +904,46 @@ function getRomanNumeral(n) {
   return map[n] || n;
 }
 
-// --- Availability state (localStorage) ---
-const AVAIL_KEY = 'venezia-honeymoon-availability';
-function loadAvail() {
-  try { return JSON.parse(localStorage.getItem(AVAIL_KEY) || '{}'); }
+// --- localStorage helpers ---
+function loadJSON(key) {
+  try { return JSON.parse(localStorage.getItem(key) || '{}'); }
   catch (e) { return {}; }
 }
-function saveAvail(state) {
-  localStorage.setItem(AVAIL_KEY, JSON.stringify(state));
+function saveJSON(key, state) {
+  localStorage.setItem(key, JSON.stringify(state));
 }
-let availState = loadAvail(); // { [hotelId]: { status: 'ok'|'ng'|'mb'|'unknown', checkedAt: timestamp } }
+
+// Availability
+const AVAIL_KEY = 'venezia-honeymoon-availability';
+let availState = loadJSON(AVAIL_KEY);
+
+// Favorites
+const FAV_KEY = 'venezia-honeymoon-favs';
+let favState = loadJSON(FAV_KEY);
+
+// Memos
+const MEMO_KEY = 'venezia-honeymoon-memos';
+let memoState = loadJSON(MEMO_KEY);
+
+window.toggleFav = function(id) {
+  favState[id] = !favState[id];
+  saveJSON(FAV_KEY, favState);
+  // Light update: just toggle button class to preserve memo focus
+  const btn = document.querySelector(`.fav-btn[data-id="${id}"]`);
+  if (btn) btn.classList.toggle('active', !!favState[id]);
+  // If sorted by fav, re-render to reflect new order
+  if (currentSort.key === 'favStatus') applySort();
+};
+
+window.updateMemo = function(id, value) {
+  if (value) memoState[id] = value;
+  else delete memoState[id];
+  saveJSON(MEMO_KEY, memoState);
+};
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 
 const STATUS_LABEL = {
   unknown: '未確認',
@@ -871,7 +963,7 @@ function setStatus(id, status) {
   if (!availState[id]) availState[id] = {};
   availState[id].status = status;
   availState[id].checkedAt = Date.now();
-  saveAvail(availState);
+  saveJSON(AVAIL_KEY, availState);
   applySort();
 }
 window.markAvail = setStatus;
@@ -906,14 +998,23 @@ function renderTable(data) {
     const statusLabel = STATUS_LABEL[status];
     const statusCls = STATUS_CLASS[status];
     const checkedAt = av.checkedAt ? `<span class="avail-time">checked: ${fmtTime(av.checkedAt)}</span>` : '';
+    const isFav = !!favState[h.id];
+    const memoVal = escapeHtml(memoState[h.id] || '');
     return `
       <tr>
-        <td class="col-rank">${getRomanNumeral(h.id)}</td>
+        <td class="col-rank">
+          ${getRomanNumeral(h.id)}
+          <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${h.id}" onclick="toggleFav(${h.id})" title="お気に入り">${isFav ? '★' : '☆'}</button>
+        </td>
         <td class="hotel-cell">
           <div class="badges">${badges}</div>
           <div class="hotel-name">${h.nameJa}</div>
           <div class="hotel-name-en">${h.nameEn}</div>
           <div class="hotel-desc">${h.desc}</div>
+          <div class="memo">
+            <span class="memo-label">Memo</span>
+            <textarea placeholder="ここにメモを入力（自動保存）" oninput="updateMemo(${h.id}, this.value)">${memoVal}</textarea>
+          </div>
         </td>
         <td>
           <div class="price"><span class="price-currency">€</span>${h.priceMin}〜${h.priceMax}</div>
@@ -972,6 +1073,12 @@ function sortData(key, dir) {
       const sb = (availState[b.id] && availState[b.id].status) || 'unknown';
       va = STATUS_ORDER[sa];
       vb = STATUS_ORDER[sb];
+    } else if (key === 'favStatus') {
+      va = favState[a.id] ? 0 : 1;
+      vb = favState[b.id] ? 0 : 1;
+      if (va === vb) {
+        va = a.stationWalk; vb = b.stationWalk;
+      }
     } else {
       va = a[key]; vb = b[key];
     }
