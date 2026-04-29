@@ -198,20 +198,22 @@
     border: none;
     font-size: 22px;
     cursor: pointer;
-    color: var(--border);
     padding: 0;
     margin: 10px auto 0;
     line-height: 1;
     transition: all 0.15s;
     font-family: serif;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--text-muted);
   }
   .fav-btn:hover {
-    color: var(--gold-light);
+    -webkit-text-stroke: 1.5px var(--gold-light);
     transform: scale(1.15);
   }
   .fav-btn.active {
     color: var(--gold);
-    text-shadow: 0 0 1px var(--gold);
+    -webkit-text-stroke: 0;
+    text-shadow: 0 0 6px rgba(160, 133, 64, 0.35);
   }
   .memo {
     margin-top: 12px;
@@ -614,12 +616,99 @@
   .pin-marker.station { background: var(--gold); }
   .pin-marker.bus { background: #5a6b3c; }
 
+  /* Expand toggle (mobile only) */
+  .expand-toggle {
+    display: none;
+  }
+
   @media (max-width: 768px) {
     .site-header { padding: 40px 20px 32px; }
     .site-header h1 { font-size: 22px; }
     .container { padding: 24px 16px 60px; }
     .controls select { min-width: 0; flex: 1; }
-    th, td { padding: 14px 10px; font-size: 12px; }
+
+    /* Card layout — kill table semantics */
+    .table-wrap {
+      border: none;
+      background: transparent;
+      box-shadow: none;
+      overflow: visible;
+    }
+    table { min-width: 0; }
+    thead { display: none; }
+    tbody, tbody tr, tbody td { display: block; width: 100%; }
+
+    tbody tr {
+      margin-bottom: 18px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    tbody tr:hover { background: var(--card); }
+
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+    }
+    td:last-child { border-bottom: none; }
+
+    /* Rank header bar */
+    td.col-rank {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      width: auto;
+      background: var(--bg-soft);
+      border-bottom: 1px solid var(--gold-light);
+      text-align: left;
+      font-size: 22px;
+    }
+    td.col-rank .fav-btn {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    /* Inline labels per card cell */
+    td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      font-family: 'Noto Serif JP', serif;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    /* Expandable cells hidden by default */
+    td.expandable { display: none; }
+    tr.expanded td.expandable {
+      display: block;
+      background: #fdfaf3;
+    }
+
+    /* Expand toggle button */
+    .expand-toggle {
+      display: block;
+      width: 100%;
+      margin-top: 16px;
+      padding: 11px 12px;
+      background: var(--card);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      cursor: pointer;
+      font-family: 'Noto Serif JP', serif;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .expand-toggle:hover {
+      background: var(--gold);
+      color: var(--card);
+    }
   }
 </style>
 </head>
@@ -652,7 +741,7 @@
       <option value="rating-desc">評価 高い順</option>
       <option value="availStatus-asc">空室状況（あり優先）</option>
     </select>
-    <span class="count" id="count-display">11 hotels</span>
+    <span class="count" id="count-display">12 hotels</span>
   </div>
 
   <div class="table-wrap">
@@ -682,7 +771,7 @@
       <div class="section-deco"></div>
     </div>
     <div id="map"></div>
-    <div class="map-note">マーカー番号（Ⅰ〜Ⅺ）はテーブル・ピンリストと完全連動 ／ クリック → ポップアップから Google Maps へ遷移</div>
+    <div class="map-note">マーカー番号（Ⅰ〜Ⅻ）はテーブル・ピンリストと完全連動 ／ クリック → ポップアップから Google Maps へ遷移</div>
 
     <div class="pin-grid" id="pin-grid"></div>
   </section>
@@ -890,6 +979,22 @@ const hotels = [
     official: "https://www.marriott.com/en-us/hotels/vceac-ac-hotel-venezia/overview/",
     booking: withDates("https://www.booking.com/hotel/it/ac-venezia-by-marriott.html"),
     expedia: "https://www.expedia.com/Venice-Hotels-Ac-Hotel-Venezia-By-Marriott.h22489246.Hotel-Information?chkin=2026-05-09&chkout=2026-05-11&adults=2"
+  },
+  {
+    id: 12,
+    nameJa: "ホテル・カールトン・オン・ザ・グランドキャナル",
+    nameEn: "Hotel Carlton on the Grand Canal",
+    badges: [{ label: "4★", cls: "" }, { label: "駅徒歩3分", cls: "badge-soft" }, { label: "屋上バー", cls: "badge-soft" }],
+    sestiere: "Santa Croce",
+    desc: "駅から橋一本（Scalzi橋）の大運河沿い4★145室。屋上バーから大運河パノラマ、Murano製シャンデリア＋ヴェネツィア1700年代スタイル",
+    priceMin: 200, priceMax: 400,
+    stationWalk: 3, busWalk: 5, waterTaxi: 30,
+    canalView: "大運河（駅対岸・屋上バー有）",
+    rating: 4.0,
+    lat: 45.4406, lng: 12.3210,
+    official: "https://carltongrandcanal.com/",
+    booking: bookingSearch("Hotel Carlton on the Grand Canal Venice"),
+    expedia: expediaSearch("Hotel Carlton on the Grand Canal Venice")
   }
 ];
 
@@ -939,6 +1044,19 @@ window.updateMemo = function(id, value) {
   if (value) memoState[id] = value;
   else delete memoState[id];
   saveJSON(MEMO_KEY, memoState);
+};
+
+// Expanded rows (UI state, in-memory)
+const expandedIds = new Set();
+window.toggleExpand = function(id) {
+  if (expandedIds.has(id)) expandedIds.delete(id);
+  else expandedIds.add(id);
+  const tr = document.querySelector(`tr[data-row-id="${id}"]`);
+  if (!tr) return;
+  const isOpen = expandedIds.has(id);
+  tr.classList.toggle('expanded', isOpen);
+  const btn = tr.querySelector('.expand-toggle');
+  if (btn) btn.textContent = isOpen ? '▲ 閉じる' : '▼ 詳細を表示';
 };
 
 function escapeHtml(s) {
@@ -1000,11 +1118,12 @@ function renderTable(data) {
     const checkedAt = av.checkedAt ? `<span class="avail-time">checked: ${fmtTime(av.checkedAt)}</span>` : '';
     const isFav = !!favState[h.id];
     const memoVal = escapeHtml(memoState[h.id] || '');
+    const isExpanded = expandedIds.has(h.id);
     return `
-      <tr>
+      <tr data-row-id="${h.id}" class="${isExpanded ? 'expanded' : ''}">
         <td class="col-rank">
-          ${getRomanNumeral(h.id)}
-          <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${h.id}" onclick="toggleFav(${h.id})" title="お気に入り">${isFav ? '★' : '☆'}</button>
+          <span>${getRomanNumeral(h.id)}</span>
+          <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${h.id}" onclick="toggleFav(${h.id})" title="お気に入り">★</button>
         </td>
         <td class="hotel-cell">
           <div class="badges">${badges}</div>
@@ -1015,34 +1134,35 @@ function renderTable(data) {
             <span class="memo-label">Memo</span>
             <textarea placeholder="ここにメモを入力（自動保存）" oninput="updateMemo(${h.id}, this.value)">${memoVal}</textarea>
           </div>
+          <button class="expand-toggle" onclick="toggleExpand(${h.id})">${isExpanded ? '▲ 閉じる' : '▼ 詳細を表示'}</button>
         </td>
-        <td>
+        <td class="expandable" data-label="参考料金/泊">
           <div class="price"><span class="price-currency">€</span>${h.priceMin}〜${h.priceMax}</div>
           <span class="price-note">2名・税サ込・概算</span>
         </td>
-        <td>
+        <td class="expandable" data-label="駅徒歩">
           <div><span class="time">${h.stationWalk}</span><span class="time-unit">min</span></div>
           <span class="time-note">サンタルチア駅</span>
         </td>
-        <td>
+        <td class="expandable" data-label="バス降車後">
           <div><span class="time">${h.busWalk}</span><span class="time-unit">min</span></div>
           <span class="time-note">P.le Roma → 徒歩</span>
         </td>
-        <td>
+        <td class="expandable" data-label="水上タクシー">
           <div><span class="time">${h.waterTaxi}</span><span class="time-unit">min</span></div>
           <span class="time-note">空港 → 直行</span>
         </td>
-        <td>
+        <td class="expandable" data-label="運河ビュー">
           <div class="canal">${h.canalView}</div>
           <div class="hotel-desc" style="margin-top:4px">${h.sestiere}</div>
         </td>
-        <td>
+        <td data-label="評価">
           <div class="rating">
             <span class="rating-num">${h.rating.toFixed(1)}</span>
             <span class="rating-of">/5.0</span>
           </div>
         </td>
-        <td class="avail-cell">
+        <td class="avail-cell" data-label="空室状況">
           <span class="avail-status ${statusCls}">${statusLabel}</span>
           <button class="avail-check-btn" onclick="openAllOTA(${h.id})" title="Booking / Expedia / 公式サイトを新規タブで一括オープン">▶ 一括チェック</button>
           <div class="avail-mark-row">
@@ -1052,7 +1172,7 @@ function renderTable(data) {
           </div>
           ${checkedAt}
         </td>
-        <td>
+        <td data-label="予約">
           <div class="ota">
             <a class="ota-btn primary" href="${h.booking}" target="_blank" rel="noopener">Booking.com</a>
             <a class="ota-btn" href="${h.expedia}" target="_blank" rel="noopener">Expedia</a>
