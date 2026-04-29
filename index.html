@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src https://fonts.gstatic.com; img-src 'self' https://*.tile.openstreetmap.org; connect-src 'self';" />
 <title>Venezia Honeymoon Hotels | 2026.05.09 - 05.11</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -785,6 +786,9 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script>
+(function() {
+"use strict";
+
 const DATES = { in: "2026-05-09", out: "2026-05-11" };
 
 function bookingSearch(name) {
@@ -1060,7 +1064,7 @@ window.toggleExpand = function(id) {
 };
 
 function escapeHtml(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 const STATUS_LABEL = {
@@ -1109,7 +1113,7 @@ function fmtTime(ts) {
 
 function renderTable(data) {
   tbody.innerHTML = data.map((h, idx) => {
-    const badges = h.badges.map(b => `<span class="badge ${b.cls}">${b.label}</span>`).join('');
+    const badges = h.badges.map(b => `<span class="badge ${escapeHtml(b.cls)}">${escapeHtml(b.label)}</span>`).join('');
     const extraBtn = h.extra ? `<a class="ota-btn gold" href="${h.extra.url}" target="_blank" rel="noopener">${h.extra.label}</a>` : '';
     const av = availState[h.id] || {};
     const status = av.status || 'unknown';
@@ -1127,11 +1131,11 @@ function renderTable(data) {
         </td>
         <td class="hotel-cell">
           <div class="badges">${badges}</div>
-          <div class="hotel-name">${h.nameJa}</div>
-          <div class="hotel-name-en">${h.nameEn}</div>
-          <div class="hotel-desc">${h.desc}</div>
+          <div class="hotel-name">${escapeHtml(h.nameJa)}</div>
+          <div class="hotel-name-en">${escapeHtml(h.nameEn)}</div>
+          <div class="hotel-desc">${escapeHtml(h.desc)}</div>
           <div class="memo">
-            <span class="memo-label">Memo</span>
+            <span class="memo-label">Memo</span><span class="memo-warning">機密情報は入力しないでください</span>
             <textarea placeholder="ここにメモを入力（自動保存）" oninput="updateMemo(${h.id}, this.value)">${memoVal}</textarea>
           </div>
           <button class="expand-toggle" onclick="toggleExpand(${h.id})">${isExpanded ? '▲ 閉じる' : '▼ 詳細を表示'}</button>
@@ -1153,8 +1157,8 @@ function renderTable(data) {
           <span class="time-note">空港 → 直行</span>
         </td>
         <td class="expandable" data-label="運河ビュー">
-          <div class="canal">${h.canalView}</div>
-          <div class="hotel-desc" style="margin-top:4px">${h.sestiere}</div>
+          <div class="canal">${escapeHtml(h.canalView)}</div>
+          <div class="hotel-desc" style="margin-top:4px">${escapeHtml(h.sestiere)}</div>
         </td>
         <td data-label="評価">
           <div class="rating">
@@ -1248,7 +1252,7 @@ pinGrid.innerHTML = hotels.map((h) => `
   <a class="pin-btn" href="${gmapsLink(h.nameEn)}" target="_blank" rel="noopener">
     <span class="pin-num">${getRomanNumeral(h.id)}</span>
     <span class="pin-icon">📍</span>
-    <span class="pin-name">${h.nameJa}</span>
+    <span class="pin-name">${escapeHtml(h.nameJa)}</span>
   </a>
 `).join('');
 
@@ -1278,8 +1282,8 @@ hotels.forEach((h) => {
     icon: makeIcon(getRomanNumeral(h.id))
   }).addTo(map);
   marker.bindPopup(`
-    <div class="popup-title">${h.nameJa}</div>
-    <div class="popup-en">${h.nameEn}</div>
+    <div class="popup-title">${escapeHtml(h.nameJa)}</div>
+    <div class="popup-en">${escapeHtml(h.nameEn)}</div>
     <a class="popup-link" href="${gmapsLink(h.nameEn)}" target="_blank" rel="noopener">Google Maps で開く</a>
   `);
 });
@@ -1291,6 +1295,7 @@ L.marker([45.4413, 12.3214], { icon: makeIcon('S', 'station') })
 L.marker([45.4380, 12.3186], { icon: makeIcon('B', 'bus') })
   .addTo(map)
   .bindPopup('<div class="popup-title">Piazzale Roma</div><div class="popup-en">空港バス降車地点</div>');
+})();
 </script>
 </body>
 </html>
